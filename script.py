@@ -1,0 +1,1 @@
+# Scrum Team 6 | INFOTC-4320-Stock-Data-Visualizer
