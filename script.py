@@ -33,11 +33,8 @@ def SelectChart():
             print("Input must be the integer 1 or 2")
         
 
-
-if __name__ == "__main__":
+def main():
     stock_symbol = get_stock_symbol()
-    SelectChart()
+    chart = SelectChart()
 
-            
-
-   
+main()
