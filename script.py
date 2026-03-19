@@ -34,36 +34,6 @@ def SelectChart():
         except ValueError:
             print("Input must be the integer 1 or 2")
 
-def querying_api(time_series_type, stock_symbol, API_KEY):
-    while True:
-        if time_series_type == 1:
-            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={stock_symbol}&interval=5min&apikey={API_KEY}'
-            r = requests.get(url)
-            data = r.csv()
-            return data
-        elif time_series_type == 2:
-            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock_symbol}&apikey={API_KEY}'
-            r = requests.get(url)
-            data = r.csv()
-            return data
-        elif time_series_type == 3:
-            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={stock_symbol}&apikey={API_KEY}'
-            r = requests.get(url)
-            data = r.csv()
-            return data
-        elif time_series_type == 4:
-            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol={stock_symbol}&apikey={API_KEY}'
-            r = requests.get(url)
-            data = r.csv()
-            return data
-        else:
-            print("Error!")
-
-
-
-
-
-        
 # ======= TIME SERIES (Ben) =======
 def time_series_menu():
     
@@ -88,6 +58,37 @@ def time_series_menu():
             print("ERROR: input is invalid try again...")
             continue
         return
+    
+# ======= TIME SERIES QUERY (Mia) =======
+def querying_api(time_series_type, stock_symbol, API_KEY):
+    try:
+        import requests
+    except:
+        print("\nFailed to import requests")
+
+    while True:
+        if time_series_type == 1:
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={stock_symbol}&interval=5min&apikey={API_KEY}'
+            r = requests.get(url)
+            data = r.csv()
+            return data
+        elif time_series_type == 2:
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock_symbol}&apikey={API_KEY}'
+            r = requests.get(url)
+            data = r.csv()
+            return data
+        elif time_series_type == 3:
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={stock_symbol}&apikey={API_KEY}'
+            r = requests.get(url)
+            data = r.csv()
+            return data
+        elif time_series_type == 4:
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol={stock_symbol}&apikey={API_KEY}'
+            r = requests.get(url)
+            data = r.csv()
+            return data
+        else:
+            print("Error!")
 
 # ======= YYYY-MM-DD [Begin & End] (Sebastian) =======
 def get_begin_date():
@@ -151,6 +152,9 @@ def validate_dates(begin_date, end_date):
 # ============== MAIN FUNCTION ==============
 def main():
 
+    # == API KEY ==:
+    API_KEY = "T5LLNYG4DQCQB5QI"
+
     # == Stock Symbol ==
     stock_symbol = get_stock_symbol()
 
@@ -158,7 +162,8 @@ def main():
     chart = SelectChart()
 
     # == Time Series ==
-    time_series_menu()
+    time_series_type = time_series_menu()
+    querying_api(time_series_type, stock_symbol, API_KEY)
     
     # == Date Selection ==
     begin_date = get_begin_date()
