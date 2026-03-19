@@ -1,1 +1,19 @@
-# Scrum Team 6 | INFOTC-4320-Stock-Data-Visualizer
+def SelectChart():
+        while True:
+            try:    
+                # Ask user for input and validate their choice
+                ChartInput = int(input("Please select a chart type:\n 1. Line Graph\n 2. Bar Graph\n\n Selection: "))
+                if ChartInput == 1 or ChartInput == 2:
+                    print("Correct input")
+                elif ChartInput != 1 or ChartInput != 2:
+                    print("The value must be either 1 or 2")
+                else:
+                    return SelectChart
+            # Making sure that a person's input is not a string
+            except ValueError:
+                print("Input must be the integer 1 or 2")
+
+SelectChart()
+
+            
+            
