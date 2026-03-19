@@ -10,14 +10,13 @@ def time_series_menu():
 
         time_series = input("Enter the time seroes option (1, 2, 3, 4): ")
         if time_series == "1":
-            Intraday()
+            return 1
         elif time_series == "2":
-            Daily()
+            return 2
         elif time_series == "3":
-            Weekly()
+            return 3
         elif time_series == "4":
-            Monthly()
+            return 4
         else: 
             print("ERROR: input is invalid try again...")
             continue
-        return
