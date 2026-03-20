@@ -224,7 +224,7 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
         
         chart.title = f"Stock Data for {symbol}: {start_date} to {end_date}"
         
-        chart.x_labels = SortedDates
+        chart.x_labels = GraphDates
         chart.add('Open', Open)
         chart.add('Close', Close)
         chart.add('High', High)
