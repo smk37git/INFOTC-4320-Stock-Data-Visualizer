@@ -54,6 +54,16 @@ def time_series_menu():
         else: 
             print("ERROR: input is invalid try again...")
             continue
+
+def get_time_series_label(time_series_type):
+    if time_series_type == 1:
+        return "Intraday"
+    elif time_series_type == 2:
+        return "Daily"
+    elif time_series_type == 3:
+        return "Weekly"
+    elif time_series_type == 4:
+        return "Monthly"
     
 # ======= TIME SERIES QUERY (Mia) =======
 def querying_api(time_series_type, stock_symbol, API_KEY):
@@ -147,7 +157,7 @@ def validate_dates(begin_date, end_date):
 
 # GRAPH GENERATION (Trent)
 
-def GraphGeneration(data, ChartInput, start_date, end_date, symbol, TimeSeries):
+def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_type):
         
         #Date list and sort go here:
         
