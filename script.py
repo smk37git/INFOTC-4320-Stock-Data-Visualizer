@@ -150,9 +150,8 @@ def validate_dates(begin_date, end_date):
 # GRAPH GENERATION (Trent)
 
 def GraphGeneration(data, ChartInput, start_date, end_date, symbol, TimeSeries):
-        # Sorting the date list
         
-        #Placeholder for date list.sort()
+        #Date list and sort go here:
         
         # Creating seperate lists for the four types we need to graph
         
