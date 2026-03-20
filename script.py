@@ -21,15 +21,12 @@ def SelectChart():
         try:    
             # Ask user for input and validate their choice
             ChartInput = int(input("Please select a chart type:\n 1. Line Graph\n 2. Bar Graph\n\n Selection: "))
-            while ChartInput == 1 or ChartInput == 2:
-                if ChartInput == 1:
-                    LineGraph()
-                elif ChartInput == 2:
-                    BarChart()
-                elif ChartInput != 1 or ChartInput != 2:
-                    print("The value must be either 1 or 2")      
-                else:
-                    return SelectChart
+            if ChartInput == 1 or ChartInput ==2:
+                return ChartInput
+            elif ChartInput != 1 or ChartInput != 2:
+                print("Invalid integer, please try again.") 
+            else:
+                return SelectChart()
         # Making sure that a person's input is not a string
         except ValueError:
             print("Input must be the integer 1 or 2")
@@ -58,6 +55,7 @@ def time_series_menu():
             print("ERROR: input is invalid try again...")
             continue
         return
+
     
 # ======= TIME SERIES QUERY (Mia) =======
 def querying_api(time_series_type, stock_symbol, API_KEY):
@@ -148,6 +146,42 @@ def validate_dates(begin_date, end_date):
     except:
         print("\nERROR: Invalid date format")
         return False
+
+# GRAPH GENERATION (Trent)
+
+def GraphGeneration(data, ChartInput, start_date, end_date, symbol, TimeSeries):
+        # Sorting the date list
+        
+        #Placeholder for date list.sort()
+        
+        # Creating seperate lists for the four types we need to graph
+        
+        High = []
+        Low = []
+        Open = []
+        Close = []
+            
+        # CHART SETUP
+        
+        # Create the chart
+        
+        try:
+            if ChartInput == 1:
+                chart = pygal.Line()
+            else:
+                chart = pygal.Bar()
+        except:
+            print("Value Error")    
+        
+        # print the chart title and labels
+        
+        chart.title = f"Stock Data for {symbol}: {start_date} to {end_date}"
+        
+        chart.x_labels = SortedDates
+        chart.add('Open', Open)
+        chart.add('Close', Close)
+        chart.add('High', High)
+        chart.add('Low', Low)
 
 # ============== MAIN FUNCTION ==============
 def main():
