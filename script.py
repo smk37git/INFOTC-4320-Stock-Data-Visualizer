@@ -158,8 +158,48 @@ def validate_dates(begin_date, end_date):
 # GRAPH GENERATION (Trent)
 
 def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_type):
+            import pygal
         
-        #Date list and sort go here:
+        # Set the keys to the input according to their json values:
+        if time_series_type == 1:
+            TimeKey = "Time Series (5min)"
+        elif time_series_type == 2:
+            TimeKey = "Time Series (Daily)"
+        elif time_series_type == 3:
+            TimeKey = "Weekly Time Series"
+        elif time_series_type == 4:
+            TimeKey = "Monthly Time Series"
+        else:
+            print("Value Error, please try again")
+        
+        # Get the stock data from the four different points and put it into a dictionary
+        # Uses the key value pair "1. open : 323.45", for example
+        StockData = data.get(TimeKey, {})
+        
+        # Get the dates
+        GraphDates = []
+        for date in StockData:
+            if date >= start_date and date <= end_date:
+                # add them to the list if valid
+                GraphDates.append(date)
+            
+            
+        # Sort the dates from least to most recent
+        GraphDates.sort()
+        
+        # Creating seperate lists for the four types we need to graph
+        
+        High = []
+        Low = []
+        Open = []
+        Close = []
+        
+        # Assigning the values from the json values to the list
+        for data in GraphDates:
+            Open.append(float(StockData[date]["1. open"]))
+            High.append(float(StockData[date]["2. high"]))
+            Low.append(float(StockData[date]["3. open"]))
+            Close.append(float(StockData[date]["4. close"]))
         
         # Creating seperate lists for the four types we need to graph
         
@@ -201,7 +241,7 @@ def main():
 
     # == Chart Select ==
     chart = SelectChart()
-
+    CharInput = SelectChart()
     # == Time Series ==
     time_series_type = time_series_menu()
     querying_api(time_series_type, stock_symbol, API_KEY)
@@ -211,4 +251,7 @@ def main():
     end_date = get_end_date()
     validate_dates(begin_date, end_date)
 
+    data = querying_api(time_series_type, stock_symbol, API_KEY)
+    GraphGeneration(data, ChartInput, begin_date, end_date, stock_symbol, time_series_type)
+    
 main()
