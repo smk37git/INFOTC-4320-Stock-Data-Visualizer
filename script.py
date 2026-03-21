@@ -187,31 +187,23 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
             
         # Sort the dates from least to most recent
         GraphDates.sort()
-        
-        # Creating seperate lists for the four types we need to graph
-        
-        High = []
-        Low = []
-        Open = []
-        Close = []
-        
-        # Assigning the values from the json values to the list as float
+
+        # Establishing separate lists for the four data points in the json file
+        HighPrice = []
+        LowPrice = []
+        OpenPrice = []
+        ClosePrice = []
+
+        # Assigning the prices to their date
         for data in GraphDates:
-            Open.append(float(StockData[date]["1. open"]))
-            High.append(float(StockData[date]["2. high"]))
-            Low.append(float(StockData[date]["3. open"]))
-            Close.append(float(StockData[date]["4. close"]))
+            OpenPrice.append(float(StockData[date]["1. open"]))
+            HighPrice.append(float(StockData[date]["2. high"]))
+            LowPrice.append(float(StockData[date]["3. open"]))
+            ClosePrice.append(float(StockData[date]["4. close"]))
 
             if data not in GraphDates:
                 print("There was an error getting stock prices")
         
-        # Creating seperate lists for the four types we need to graph
-        
-        High = []
-        Low = []
-        Open = []
-        Close = []
-
         # Create the chart
         try:
             if ChartInput == 1:
@@ -226,10 +218,10 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
         chart.title = f"Stock Data for {symbol}: {start_date} to {end_date}"
         
         chart.x_labels = GraphDates
-        chart.add('Open', Open)
-        chart.add('Close', Close)
-        chart.add('High', High)
-        chart.add('Low', Low)
+        chart.add('Open', OpenPrice)
+        chart.add('Close', ClosePrice)
+        chart.add('High', HighPrice)
+        chart.add('Low', LowPrice)
 
 # ============== MAIN FUNCTION ==============
 def main():
