@@ -173,7 +173,7 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
             print("Value Error, please try again")
         
         # Get the stock data from the four different points and put it into a dictionary
-        # Uses the key value pair "1. open : 323.45", for example
+        # Uses the key value pair "1. open : 323.45", for example from json
         StockData = data.get(TimeKey, {})
         
         # Get the dates
@@ -182,7 +182,8 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
             if date >= start_date and date <= end_date:
                 # add them to the list if valid
                 GraphDates.append(date)
-            
+            else:
+                print("Date value error, pleaase check date range again")
             
         # Sort the dates from least to most recent
         GraphDates.sort()
@@ -194,12 +195,15 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
         Open = []
         Close = []
         
-        # Assigning the values from the json values to the list
+        # Assigning the values from the json values to the list as float
         for data in GraphDates:
             Open.append(float(StockData[date]["1. open"]))
             High.append(float(StockData[date]["2. high"]))
             Low.append(float(StockData[date]["3. open"]))
             Close.append(float(StockData[date]["4. close"]))
+
+            if data not in GraphDates:
+                print("There was an error getting stock prices")
         
         # Creating seperate lists for the four types we need to graph
         
@@ -207,17 +211,14 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
         Low = []
         Open = []
         Close = []
-            
-        # CHART SETUP
-        
+
         # Create the chart
-        
         try:
             if ChartInput == 1:
                 chart = pygal.Line()
             else:
                 chart = pygal.Bar()
-        except:
+        except ValueError:
             print("Value Error")    
         
         # print the chart title and labels
