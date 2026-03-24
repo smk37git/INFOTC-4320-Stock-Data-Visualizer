@@ -22,7 +22,7 @@ def SelectChart():
             # Ask user for input and validate their choice
             ChartInput = int(input("Please select a chart type:\n 1. Line Graph\n 2. Bar Graph\n\n Selection: "))
             if ChartInput == 1 or ChartInput ==2:
-                return ChartInput
+                return time_series_menu
             elif ChartInput != 1 or ChartInput != 2:
                 print("Invalid integer, please try again.") 
             else:
@@ -158,8 +158,9 @@ def validate_dates(begin_date, end_date):
 # GRAPH GENERATION (Trent)
 
 def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_type):
-            import pygal
-        
+        import pygal
+        import json
+
         # Set the keys to the input according to their json values:
         if time_series_type == 1:
             TimeKey = "Time Series (5min)"
@@ -174,20 +175,13 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
         
         # Get the stock data from the four different points and put it into a dictionary
         # Uses the key value pair "1. open : 323.45", for example from json
-        StockData = data.get(TimeKey, {})
+       
+        with open('r.json') as StockData:
+            StockData = json.load(StockData)
+            print(StockData)
         
-        # Get the dates
-        GraphDates = []
-        for date in StockData:
-            if date >= start_date and date <= end_date:
-                # add them to the list if valid
-                GraphDates.append(date)
-            else:
-                print("Date value error, pleaase check date range again")
-            
-        # Sort the dates from least to most recent
-        GraphDates.sort()
-
+        # Get the date(s)
+        
         # Establishing separate lists for the four data points in the json file
         HighPrice = []
         LowPrice = []
@@ -195,16 +189,16 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
         ClosePrice = []
 
         # Assigning the prices to their date
-        for data in GraphDates:
+        for data in StockData:
             OpenPrice.append(float(StockData[date]["1. open"]))
             HighPrice.append(float(StockData[date]["2. high"]))
             LowPrice.append(float(StockData[date]["3. open"]))
             ClosePrice.append(float(StockData[date]["4. close"]))
 
-            if data not in GraphDates:
+            if data not in StockDatas:
                 print("There was an error getting stock prices")
         
-        # Create the chart
+        # // Create the chart
         try:
             if ChartInput == 1:
                 chart = pygal.Line()
@@ -217,7 +211,7 @@ def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_
         
         chart.title = f"Stock Data for {symbol}: {start_date} to {end_date}"
         
-        chart.x_labels = GraphDates
+        chart.x_labels = GraphData
         chart.add('Open', OpenPrice)
         chart.add('Close', ClosePrice)
         chart.add('High', HighPrice)
@@ -245,6 +239,6 @@ def main():
     validate_dates(begin_date, end_date)
 
     data = querying_api(time_series_type, stock_symbol, API_KEY)
-    GraphGeneration(data, ChartInput, begin_date, end_date, stock_symbol, time_series_type)
+    GraphGeneration(data, begin_date, end_date, stock_symbol, time_series_type)
     
 main()
