@@ -42,7 +42,7 @@ def time_series_menu():
         print("3. Weekly")
         print("4. Monthly")
 
-        time_series = input("Enter the time seroes option (1, 2, 3, 4): ")
+        time_series = input("Enter the time series option (1, 2, 3, 4): ")
         if time_series == "1":
             return 1
         elif time_series == "2":
@@ -76,22 +76,22 @@ def querying_api(time_series_type, stock_symbol, API_KEY):
         if time_series_type == 1:
             url = f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={stock_symbol}&interval=5min&apikey={API_KEY}'
             r = requests.get(url)
-            data = r.csv()
+            data = r.json()
             return data
         elif time_series_type == 2:
             url = f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock_symbol}&apikey={API_KEY}'
             r = requests.get(url)
-            data = r.csv()
+            data = r.json()
             return data
         elif time_series_type == 3:
             url = f'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={stock_symbol}&apikey={API_KEY}'
             r = requests.get(url)
-            data = r.csv()
+            data = r.json()
             return data
         elif time_series_type == 4:
             url = f'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol={stock_symbol}&apikey={API_KEY}'
             r = requests.get(url)
-            data = r.csv()
+            data = r.json()
             return data
         else:
             print("Error!")
@@ -158,71 +158,83 @@ def validate_dates(begin_date, end_date):
 # GRAPH GENERATION (Trent)
 
 def GraphGeneration(data, ChartInput, start_date, end_date, symbol, time_series_type):
-            import pygal
-            import csv
+    import pygal
+    import csv
+    
+    # Set the keys to the input according to their json values:
+    if time_series_type == 1:
+        TimeKey = "Time Series (5min)"
+    elif time_series_type == 2:
+        TimeKey = "Time Series (Daily)"
+    elif time_series_type == 3:
+        TimeKey = "Weekly Time Series"
+    elif time_series_type == 4:
+        TimeKey = "Monthly Time Series"
+    else:
+        print("Value Error, please try again")
+        return
+    
+    # Get the stock data from the four different points and put it into a dictionary
+    # Uses the key value pair "1. open : 323.45", for example
+    StockData = data.get(TimeKey, {})
+
+    # Check that the API actually returned data
+    if not StockData:
+        print(f"No data found. API response keys were: {list(data.keys())}")
+        return
+    
+    # Get the dates
+    GraphDates = []
+    for date in StockData:
+        date_only = date[:10]  # Handles both "YYYY-MM-DD" and "YYYY-MM-DD HH:MM:SS"
+        if date_only >= start_date and date_only <= end_date:
+            GraphDates.append(date)
             
-        # Set the keys to the input according to their json values:
-        if time_series_type == 1:
-            TimeKey = "Time Series (5min)"
-        elif time_series_type == 2:
-            TimeKey = "Time Series (Daily)"
-        elif time_series_type == 3:
-            TimeKey = "Weekly Time Series"
-        elif time_series_type == 4:
-            TimeKey = "Monthly Time Series"
+    # Sort the dates from least to most recent
+    GraphDates.sort()
+
+    # Check that dates entered fall within the available data range
+    if not GraphDates:
+        print(f"No data found between {start_date} and {end_date}.")
+        print(f"Available date range: {min(StockData)[:10]} to {max(StockData)[:10]}")
+        return
+    
+    # Creating separate lists for the four types we need to graph
+    High = []
+    Low = []
+    Open = []
+    Close = []
+        
+    # Assigning the values from the json values to the list
+    for date in GraphDates:
+        Open.append(float(StockData[date]["1. open"]))
+        High.append(float(StockData[date]["2. high"]))
+        Low.append(float(StockData[date]["3. low"]))
+        Close.append(float(StockData[date]["4. close"]))
+        
+    # CHART SETUP
+    
+    # Create the chart
+    try:
+        if ChartInput == 1:
+            chart = pygal.Line()
         else:
-            print("Value Error, please try again")
-        
-        # Get the stock data from the four different points and put it into a dictionary
-        # Uses the key value pair "1. open : 323.45", for example
-        StockData = data.get(TimeKey, {})
-        
-        # Get the dates
-        GraphDates = []
-        for date in StockData:
-            if date >= start_date and date <= end_date:
-                # add them to the list if valid
-                GraphDates.append(date)
-            
-            
-        # Sort the dates from least to most recent
-        GraphDates.sort()
-        
-        # Creating seperate lists for the four types we need to graph
-        
-        High = []
-        Low = []
-        Open = []
-        Close = []
-        
-        # Assigning the values from the json values to the list
-        for data in GraphDates:
-            Open.append(float(StockData[date]["1. open"]))
-            High.append(float(StockData[date]["2. high"]))
-            Low.append(float(StockData[date]["3. open"]))
-            Close.append(float(StockData[date]["4. close"]))
-            
-        # CHART SETUP
-        
-        # Create the chart
-        
-        try:
-            if ChartInput == 1:
-                chart = pygal.Line()
-            else:
-                chart = pygal.Bar()
-        except:
-            print("Value Error")    
-        
-        # print the chart title and labels
-        
-        chart.title = f"Stock Data for {symbol}: {start_date} to {end_date}"
-        
-        chart.x_labels = GraphDates
-        chart.add('Open', Open)
-        chart.add('Close', Close)
-        chart.add('High', High)
-        chart.add('Low', Low)
+            chart = pygal.Bar()
+    except:
+        print("Value Error")
+        return
+    
+    # Set the chart title and labels
+    chart.title = f"Stock Data for {symbol}: {start_date} to {end_date}"
+    
+    chart.x_labels = GraphDates
+    chart.add('Open', Open)
+    chart.add('Close', Close)
+    chart.add('High', High)
+    chart.add('Low', Low)
+
+    chart.render_to_file(f"{symbol}_chart.svg")
+    print(f"Chart saved as {symbol}_chart.svg")
 
 # ============== MAIN FUNCTION ==============
 def main():
@@ -234,16 +246,18 @@ def main():
     stock_symbol = get_stock_symbol()
 
     # == Chart Select ==
-    chart = SelectChart()
-    CharInput = SelectChart()
+    ChartInput = SelectChart()
+
     # == Time Series ==
     time_series_type = time_series_menu()
-    querying_api(time_series_type, stock_symbol, API_KEY)
     
     # == Date Selection ==
     begin_date = get_begin_date()
     end_date = get_end_date()
-    validate_dates(begin_date, end_date)
+
+    if not validate_dates(begin_date, end_date):
+        print("Please restart and enter a valid date range.")
+        return
 
     data = querying_api(time_series_type, stock_symbol, API_KEY)
     GraphGeneration(data, ChartInput, begin_date, end_date, stock_symbol, time_series_type)
